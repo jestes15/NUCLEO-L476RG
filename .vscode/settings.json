@@ -1,0 +1,32 @@
+{
+	"files.associations": {
+		"*.COBOL*": "cobol",
+		"*.COB*": "cobol",
+		"*.COBCOPY*": "cobol",
+		"*.COPYBOOK*": "cobol",
+		"*.COPY*": "cobol",
+		"*.PL1*": "pl1",
+		"*.PLI*": "pl1",
+		"*.INC*": "pl1",
+		"*.INCLUDE*": "pl1",
+		"*.JCL*": "jcl",
+		"*.ASM*": "hlasm",
+		"*.ASSEMBLE*": "hlasm",
+		"*.HLASM*": "hlasm",
+		"*.HLA*": "hlasm",
+		"*.MACLIB*": "hlasm",
+		"*.EXEC*": "rexx",
+		"*.REXX*": "rexx",
+		"*.REXXINC*": "rexx",
+		"*.copyasm": "hlasm",
+		"*.macasm": "hlasm",
+		"*.bms": "hlasm",
+		"*.rex": "rexx",
+		"*.rexx": "rexx",
+		"stm32l4xx_hal_def.h": "c",
+		"stm32l4xx.h": "c",
+		"stm32_hal_legacy.h": "c",
+		"stddef.h": "c",
+		"stm32l4xx_hal_rng.h": "c"
+	}
+}
