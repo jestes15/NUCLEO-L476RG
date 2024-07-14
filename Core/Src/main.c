@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -47,6 +49,7 @@ RNG_HandleTypeDef hrng;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
 
@@ -59,8 +62,9 @@ static void MX_I2C3_Init(void);
 static void MX_RNG_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void USR_LogMessages();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -76,7 +80,16 @@ int main(void)
 {
 
     /* USER CODE BEGIN 1 */
+    uint8_t TxBuffer[50];
+    uint8_t RxBuffer[50];
 
+    for (int i = 0; i < 50; ++i)
+    {
+        TxBuffer[i] = 0;
+        RxBuffer[i] = 0;
+    }
+
+    (void)RxBuffer[0];
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -101,8 +114,9 @@ int main(void)
     MX_RNG_Init();
     MX_USART2_UART_Init();
     MX_TIM3_Init();
+    MX_USART3_UART_Init();
     /* USER CODE BEGIN 2 */
-
+    uint32_t iteration = 0;
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -110,11 +124,18 @@ int main(void)
     while (1)
     {
         /* USER CODE END WHILE */
+
+        /* USER CODE BEGIN 3 */
+
+        snprintf((char *)TxBuffer, 50, "Iteration %ld\n", iteration);
+        HAL_UART_Transmit(&huart2, TxBuffer, 50, 10);
+        HAL_UART_Transmit(&huart3, TxBuffer, 50, 10);
+
         HAL_Delay(500);
         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
         HAL_GPIO_TogglePin(LED_PC10_GPIO_Port, LED_PC10_Pin);
         HAL_GPIO_TogglePin(LED_PC11_GPIO_Port, LED_PC11_Pin);
-        /* USER CODE BEGIN 3 */
+        iteration++;
     }
     /* USER CODE END 3 */
 }
@@ -183,7 +204,7 @@ static void MX_I2C3_Init(void)
 
     /* USER CODE END I2C3_Init 1 */
     hi2c3.Instance = I2C3;
-    hi2c3.Init.Timing = 0x10909CEC;
+    hi2c3.Init.Timing = 0x20E16892;
     hi2c3.Init.OwnAddress1 = 0;
     hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
     hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -315,6 +336,40 @@ static void MX_USART2_UART_Init(void)
     /* USER CODE BEGIN USART2_Init 2 */
 
     /* USER CODE END USART2_Init 2 */
+}
+
+/**
+ * @brief USART3 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_USART3_UART_Init(void)
+{
+
+    /* USER CODE BEGIN USART3_Init 0 */
+
+    /* USER CODE END USART3_Init 0 */
+
+    /* USER CODE BEGIN USART3_Init 1 */
+
+    /* USER CODE END USART3_Init 1 */
+    huart3.Instance = USART3;
+    huart3.Init.BaudRate = 115200;
+    huart3.Init.WordLength = UART_WORDLENGTH_8B;
+    huart3.Init.StopBits = UART_STOPBITS_1;
+    huart3.Init.Parity = UART_PARITY_NONE;
+    huart3.Init.Mode = UART_MODE_TX_RX;
+    huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+    huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+    huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+    if (HAL_UART_Init(&huart3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN USART3_Init 2 */
+
+    /* USER CODE END USART3_Init 2 */
 }
 
 /**
