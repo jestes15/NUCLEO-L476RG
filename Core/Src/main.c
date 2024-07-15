@@ -22,7 +22,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 
 /* USER CODE END Includes */
 
@@ -90,11 +92,11 @@ static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int size);
 
-static void USR_LogVariable_char(UART_HandleTypeDef uart_port, char *variable_name, char variable);
+static void USR_LogVariable_char(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, char variable);
 static void USR_LogVariable_ptrChar(UART_HandleTypeDef uart_port, char *variable_name, char *variable, int length);
 static void USR_LogVariable_short(UART_HandleTypeDef uart_port, char *variable_name, short variable);
 static void USR_LogVariable_ptrShort(UART_HandleTypeDef uart_port, char *variable_name, short *variable, int length);
-static void USR_LogVariable_int(UART_HandleTypeDef uart_port, char *variable_name, int variable);
+static void USR_LogVariable_int(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, int variable);
 static void USR_LogVariable_ptrInt(UART_HandleTypeDef uart_port, char *variable_name, int *variable, int length);
 static void USR_LogVariable_long(UART_HandleTypeDef uart_port, char *variable_name, long variable);
 static void USR_LogVariable_ptrLong(UART_HandleTypeDef uart_port, char *variable_name, long *variable, int length);
@@ -173,10 +175,8 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-
-        snprintf((char *)TxBuffer, 50, "Iteration %ld\n", iteration);
-        HAL_UART_Transmit(&huart2, TxBuffer, 50, 10);
-        HAL_UART_Transmit(&huart3, TxBuffer, 50, 10);
+        USR_LogVariable_int(&huart2, "iteration", 9, iteration);
+        USR_LogVariable_int(&huart3, "iteration", 9, iteration);
 
         HAL_Delay(500);
         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -473,9 +473,12 @@ static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int siz
 {
     HAL_UART_Transmit(uart_port, message, size, 10);
 }
-
-static void USR_LogVariable_char(UART_HandleTypeDef uart_port, char *variable_name, char variable)
+static void USR_LogVariable_char(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, char variable)
 {
+    char *final_string = malloc(sizeof(char) * sizeof_varname + 10);
+    int characters = sprintf(final_string, "%s: %c\n", variable_name, variable);
+
+    HAL_UART_Transmit(uart_port, final_string, characters, 10);
 }
 static void USR_LogVariable_ptrChar(UART_HandleTypeDef uart_port, char *variable_name, char *variable, int length)
 {
@@ -486,8 +489,12 @@ static void USR_LogVariable_short(UART_HandleTypeDef uart_port, char *variable_n
 static void USR_LogVariable_ptrShort(UART_HandleTypeDef uart_port, char *variable_name, short *variable, int length)
 {
 }
-static void USR_LogVariable_int(UART_HandleTypeDef uart_port, char *variable_name, int variable)
+static void USR_LogVariable_int(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, int variable)
 {
+    char *final_string = malloc(sizeof(char) * sizeof_varname + 16);
+    int characters = sprintf(final_string, "%s: %d\n", variable_name, variable);
+
+    HAL_UART_Transmit(uart_port, final_string, characters, 10);
 }
 static void USR_LogVariable_ptrInt(UART_HandleTypeDef uart_port, char *variable_name, int *variable, int length)
 {
