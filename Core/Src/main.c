@@ -33,12 +33,36 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define CTRL_CODE 0b1010
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+enum TYPE
+{
+    CHAR = 0,
+};
 
+enum RW_COMMANDS
+{
+    WRITE = 0,
+    READ = 1
+};
+
+enum BLOCK_SELECT
+{
+    BLK_ZERO = 0b0,
+    BLK_ONE = 0b1
+};
+
+// These values correspond to what lines are pulled high on the EEPROM chip inputs A0 and A1
+enum CHIP_SELECT
+{
+    CHIP_ZERO = 0x0,
+    CHIP_ONE = 0x1,
+    CHIP_TWO = 0x2,
+    CHIP_THREE = 0x3
+};
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -64,7 +88,30 @@ static void MX_USART2_UART_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
-static void USR_LogMessages();
+static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int size);
+
+static void USR_LogVariable_char(UART_HandleTypeDef uart_port, char *variable_name, char variable);
+static void USR_LogVariable_ptrChar(UART_HandleTypeDef uart_port, char *variable_name, char *variable, int length);
+static void USR_LogVariable_short(UART_HandleTypeDef uart_port, char *variable_name, short variable);
+static void USR_LogVariable_ptrShort(UART_HandleTypeDef uart_port, char *variable_name, short *variable, int length);
+static void USR_LogVariable_int(UART_HandleTypeDef uart_port, char *variable_name, int variable);
+static void USR_LogVariable_ptrInt(UART_HandleTypeDef uart_port, char *variable_name, int *variable, int length);
+static void USR_LogVariable_long(UART_HandleTypeDef uart_port, char *variable_name, long variable);
+static void USR_LogVariable_ptrLong(UART_HandleTypeDef uart_port, char *variable_name, long *variable, int length);
+static void USR_LogVariable_longLong(UART_HandleTypeDef uart_port, char *variable_name, long long variable);
+static void USR_LogVariable_ptrLongLong(UART_HandleTypeDef uart_port, char *variable_name, long long *variable,
+                                        int length);
+static void USR_LogVariable_float(UART_HandleTypeDef uart_port, char *variable_name, float variable);
+static void USR_LogVariable_ptrFloat(UART_HandleTypeDef uart_port, char *variable_name, float *variable, int length);
+static void USR_LogVariable_double(UART_HandleTypeDef uart_port, char *variable_name, double variable);
+static void USR_LogVariable_ptrDouble(UART_HandleTypeDef uart_port, char *variable_name, double *variable, int length);
+
+uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select, uint8_t read_write);
+void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data);
+void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data[128]);
+uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line);
+uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line);
+uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -422,7 +469,73 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int size)
+{
+    HAL_UART_Transmit(uart_port, message, size, 10);
+}
 
+static void USR_LogVariable_char(UART_HandleTypeDef uart_port, char *variable_name, char variable)
+{
+}
+static void USR_LogVariable_ptrChar(UART_HandleTypeDef uart_port, char *variable_name, char *variable, int length)
+{
+}
+static void USR_LogVariable_short(UART_HandleTypeDef uart_port, char *variable_name, short variable)
+{
+}
+static void USR_LogVariable_ptrShort(UART_HandleTypeDef uart_port, char *variable_name, short *variable, int length)
+{
+}
+static void USR_LogVariable_int(UART_HandleTypeDef uart_port, char *variable_name, int variable)
+{
+}
+static void USR_LogVariable_ptrInt(UART_HandleTypeDef uart_port, char *variable_name, int *variable, int length)
+{
+}
+static void USR_LogVariable_long(UART_HandleTypeDef uart_port, char *variable_name, long variable)
+{
+}
+static void USR_LogVariable_ptrLong(UART_HandleTypeDef uart_port, char *variable_name, long *variable, int length)
+{
+}
+static void USR_LogVariable_longLong(UART_HandleTypeDef uart_port, char *variable_name, long long variable)
+{
+}
+static void USR_LogVariable_ptrLongLong(UART_HandleTypeDef uart_port, char *variable_name, long long *variable,
+                                        int length)
+{
+}
+static void USR_LogVariable_float(UART_HandleTypeDef uart_port, char *variable_name, float variable)
+{
+}
+static void USR_LogVariable_ptrFloat(UART_HandleTypeDef uart_port, char *variable_name, float *variable, int length)
+{
+}
+static void USR_LogVariable_double(UART_HandleTypeDef uart_port, char *variable_name, double variable)
+{
+}
+static void USR_LogVariable_ptrDouble(UART_HandleTypeDef uart_port, char *variable_name, double *variable, int length)
+{
+}
+
+uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select, uint8_t read_write)
+{
+}
+void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data)
+{
+}
+void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data[128])
+{
+}
+uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line)
+{
+}
+uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line)
+{
+}
+uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line)
+{
+}
 /* USER CODE END 4 */
 
 /**
