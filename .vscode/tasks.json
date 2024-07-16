@@ -14,7 +14,7 @@
 			]
 		},
 		{
-			"label": "STflash",
+			"label": "STflash_windows",
 			"group": "build",
 			"type": "shell",
 			"command": "STM32_Programmer_CLI.exe",
@@ -23,6 +23,22 @@
 				"port=SWD freq=4000",
 				"-w",
 				".\\build\\NUCLEO_L476RG.bin",
+				"0x08000000"
+			],
+			"dependsOn": [
+				"Build_all"
+			]
+		},
+		{
+			"label": "STflash_linux",
+			"group": "build",
+			"type": "shell",
+			"command": "STM32_Programmer_CLI",
+			"args": [
+				"-c",
+				"port=SWD freq=4000",
+				"-w",
+				"./build/NUCLEO_L476RG.bin",
 				"0x08000000"
 			],
 			"dependsOn": [

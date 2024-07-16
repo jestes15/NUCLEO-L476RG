@@ -184,32 +184,33 @@ int main(void)
 
     uint32_t float_pos = 0x70008040;
     uint32_t float_neg = 0xD2008040;
-
     uint64_t double_pos = 0x70000000D2008040;
     uint64_t double_neg = 0x80000000D2008040;
 
-    USR_LogVariable_char(&huart3, "INT8_MAX", 7, INT8_MAX);
-    USR_LogVariable_char(&huart3, "INT8_MIN", 7, INT8_MIN);
-    USR_LogVariable_short(&huart3, "INT16_MAX", 7, INT16_MAX);
-    USR_LogVariable_short(&huart3, "INT16_MIN", 7, INT16_MIN);
-    USR_LogVariable_int(&huart3, "INT32_MAX", 7, INT32_MAX);
-    USR_LogVariable_int(&huart3, "INT32_MIN", 7, INT32_MIN);
-    USR_LogVariable_long(&huart3, "INT32_MAX", 7, INT32_MAX);
-    USR_LogVariable_long(&huart3, "INT32_MIN", 7, INT32_MIN);
-    USR_LogVariable_longLong(&huart3, "INT64_MAX", 7, INT64_MAX);
-    USR_LogVariable_longLong(&huart3, "INT64_MIN", 7, INT64_MIN);
-    USR_LogVariable_float(&huart3, "float_pos", 7, *(float *)&float_pos);
-    USR_LogVariable_float(&huart3, "float_neg", 7, *(float *)&float_neg);
-    USR_LogVariable_double(&huart3, "double_pos", 7, *(double *)&float_pos);
-    USR_LogVariable_double(&huart3, "double_neg", 7, *(double *)&float_neg);
+    USR_LogVariable_char(&huart2, "INT8_MAX", 7, INT8_MAX);
+    USR_LogVariable_char(&huart2, "INT8_MIN", 7, INT8_MIN);
 
-    USR_LogVariable_ptrChar(&huart3, "ptr_char", 7, ptrChar, 5);
-    USR_LogVariable_ptrShort(&huart3, "ptr_short", 7, ptrShort, 5);
-    USR_LogVariable_ptrInt(&huart3, "ptr_int", 7, ptrInt, 5);
-    USR_LogVariable_ptrLong(&huart3, "ptr_long", 7, ptrLong, 5);
-    USR_LogVariable_ptrLongLong(&huart3, "ptr_long_long", 7, ptrLongLong, 5);
-    USR_LogVariable_ptrFloat(&huart3, "ptr_float", 7, ptrFloat, 5);
-    USR_LogVariable_ptrDouble(&huart3, "ptr_float", 7, ptrDouble, 5);
+    USR_LogVariable_short(&huart2, "INT16_MAX", 7, INT16_MAX);
+    USR_LogVariable_short(&huart2, "INT16_MIN", 7, INT16_MIN);
+
+    USR_LogVariable_int(&huart2, "INT32_MAX", 7, INT32_MAX);
+    USR_LogVariable_int(&huart2, "INT32_MIN", 7, INT32_MIN);
+    // USR_LogVariable_long(&huart2, "INT32_MAX", 7, INT32_MAX);
+    // USR_LogVariable_long(&huart2, "INT32_MIN", 7, INT32_MIN);
+    // USR_LogVariable_longLong(&huart2, "INT64_MAX", 7, INT64_MAX);
+    // USR_LogVariable_longLong(&huart2, "INT64_MIN", 7, INT64_MIN);
+    // USR_LogVariable_float(&huart2, "float_pos", 7, *(float *)&float_pos);
+    // USR_LogVariable_float(&huart2, "float_neg", 7, *(float *)&float_neg);
+    // USR_LogVariable_double(&huart2, "double_pos", 7, *(double *)&double_pos);
+    // USR_LogVariable_double(&huart2, "double_neg", 7, *(double *)&double_neg);
+
+    // USR_LogVariable_ptrChar(&huart2, "ptr_char", 7, ptrChar, 5);
+    // USR_LogVariable_ptrShort(&huart2, "ptr_short", 7, ptrShort, 5);
+    // USR_LogVariable_ptrInt(&huart2, "ptr_int", 7, ptrInt, 5);
+    // USR_LogVariable_ptrLong(&huart2, "ptr_long", 7, ptrLong, 5);
+    // USR_LogVariable_ptrLongLong(&huart2, "ptr_long_long", 7, ptrLongLong, 5);
+    // USR_LogVariable_ptrFloat(&huart2, "ptr_float", 7, ptrFloat, 5);
+    // USR_LogVariable_ptrDouble(&huart2, "ptr_float", 7, ptrDouble, 5);
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -539,12 +540,12 @@ static void USR_LogVariable_ptrChar(UART_HandleTypeDef *uart_port, char *variabl
 static void USR_LogVariable_short(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                   short variable)
 {
-    char var[17] = {0};
+    char var[21] = {0};
 
     HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
     HAL_UART_Transmit(uart_port, ": ", 2, 10);
     sprintf(var, "%hd (0x%02X)\n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 16, 10);
+    HAL_UART_Transmit(uart_port, var, 20, 10);
 }
 static void USR_LogVariable_ptrShort(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                      short *variable, int length)
@@ -563,12 +564,12 @@ static void USR_LogVariable_ptrShort(UART_HandleTypeDef *uart_port, char *variab
 }
 static void USR_LogVariable_int(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, int variable)
 {
-    char var[26] = {0};
+    char var[25] = {0};
 
     HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
     HAL_UART_Transmit(uart_port, ": ", 2, 10);
     sprintf(var, "%d (0x%04X)\n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 25, 10);
+    HAL_UART_Transmit(uart_port, var, 24, 10);
 }
 static void USR_LogVariable_ptrInt(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                    int *variable, int length)
@@ -578,12 +579,18 @@ static void USR_LogVariable_ptrInt(UART_HandleTypeDef *uart_port, char *variable
 
     HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
     HAL_UART_Transmit(uart_port, ": [ ", 4, 10);
-    for (; i < length, i++)
-        sprintf(var, "%d \n", variable, variable);
+    for (; i < length; i++)
+        sprintf(var, "%ls \n", variable, variable);
     HAL_UART_Transmit(uart_port, var, 25, 10);
 }
 static void USR_LogVariable_long(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, long variable)
 {
+    char var[35] = {0};
+
+    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, ": ", 2, 10);
+    sprintf(var, "%ld (0x%04lX)\n", variable, variable);
+    HAL_UART_Transmit(uart_port, var, 34, 10);
 }
 static void USR_LogVariable_ptrLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                     long *variable, int length)

@@ -6,7 +6,7 @@
 	"projectName": "NUCLEO-L476RG",
 	"configurations": [
 		{
-			"name": "STlink launch",
+			"name": "STlink launch windows",
 			"cwd": "${workspaceRoot}",
 			"executable": "${workspaceRoot}/build/NUCLEO_L476RG.elf",
 			"request": "launch",
@@ -15,7 +15,20 @@
 			"device": "STM32L476RG",
 			"interface": "swd",
 			// "runToEntryPoint": "main", // else it starts at reset handler - not interested
-			"preLaunchTask": "STflash", // configured in tasks.json
+			"preLaunchTask": "STflash_windows", // configured in tasks.json
+			"swoConfig": {} // currently (v1.7.0) not supported
+		},
+		{
+			"name": "STlink launch linux",
+			"cwd": "${workspaceRoot}",
+			"executable": "${workspaceRoot}/build/NUCLEO_L476RG.elf",
+			"request": "launch",
+			"type": "cortex-debug",
+			"servertype": "stlink",
+			"device": "STM32L476RG",
+			"interface": "swd",
+			// "runToEntryPoint": "main", // else it starts at reset handler - not interested
+			"preLaunchTask": "STflash_linux", // configured in tasks.json
 			"swoConfig": {} // currently (v1.7.0) not supported
 		}
 	]
