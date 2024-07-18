@@ -89,40 +89,35 @@ static void MX_USART2_UART_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
-static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int size);
-
-static void USR_LogVariable_char(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, char variable);
+static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int size) __attribute__((unused));
+static void USR_LogVariable_char(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, char variable)
+    __attribute__((unused));
 static void USR_LogVariable_ptrChar(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                    char *variable, int length);
+                                    char *variable, int length) __attribute__((unused));
 static void USR_LogVariable_short(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                  short variable);
+                                  short variable) __attribute__((unused));
 static void USR_LogVariable_ptrShort(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                     short *variable, int length);
-static void USR_LogVariable_int(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, int variable);
+                                     short *variable, int length) __attribute__((unused));
+static void USR_LogVariable_int(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, int variable)
+    __attribute__((unused));
 static void USR_LogVariable_ptrInt(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                   int *variable, int length);
-static void USR_LogVariable_long(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, long variable);
+                                   int *variable, int length) __attribute__((unused));
+static void USR_LogVariable_long(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, long variable)
+    __attribute__((unused));
 static void USR_LogVariable_ptrLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                    long *variable, int length);
-static void USR_LogVariable_longLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                     long long variable);
-static void USR_LogVariable_ptrLongLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                        long long *variable, int length);
+                                    long *variable, int length) __attribute__((unused));
 static void USR_LogVariable_float(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                  float variable);
+                                  float variable) __attribute__((unused));
 static void USR_LogVariable_ptrFloat(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                     float *variable, int length);
-static void USR_LogVariable_double(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                   double variable);
-static void USR_LogVariable_ptrDouble(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                      double *variable, int length);
+                                     float *variable, int length) __attribute__((unused));
 
-uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select, uint8_t read_write);
-void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data);
-void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data[128]);
-uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line);
-uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line);
-uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line);
+uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select) __attribute__((unused));
+void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint32_t address, uint8_t data) __attribute__((unused));
+void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t *data,
+                             uint8_t sizeof_data) __attribute__((unused));
+uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line) __attribute__((unused));
+uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line) __attribute__((unused));
+uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line) __attribute__((unused));
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -147,6 +142,7 @@ int main(void)
         RxBuffer[i] = 0;
     }
 
+    (void)TxBuffer[0];
     (void)RxBuffer[0];
     /* USER CODE END 1 */
 
@@ -174,43 +170,9 @@ int main(void)
     MX_TIM3_Init();
     MX_USART3_UART_Init();
     /* USER CODE BEGIN 2 */
-    char ptrChar[5] = "HIII";
-    short ptrShort[5] = {1, 2, 3, 4, 5};
-    int ptrInt[5] = {1, 2, 3, 4, 5};
-    long ptrLong[5] = {1, 2, 3, 4, 5};
-    long long ptrLongLong[5] = {1, 2, 3, 4, 5};
-    float ptrFloat[5] = {1, 2, 3, 4, 5};
-    double ptrDouble[5] = {1, 2, 3, 4, 5};
 
-    uint32_t float_pos = 0x70008040;
-    uint32_t float_neg = 0xD2008040;
-    uint64_t double_pos = 0x70000000D2008040;
-    uint64_t double_neg = 0x80000000D2008040;
+    HAL_TIM_Base_Start_IT(&htim3);
 
-    USR_LogVariable_char(&huart2, "INT8_MAX", 7, INT8_MAX);
-    USR_LogVariable_char(&huart2, "INT8_MIN", 7, INT8_MIN);
-
-    USR_LogVariable_short(&huart2, "INT16_MAX", 7, INT16_MAX);
-    USR_LogVariable_short(&huart2, "INT16_MIN", 7, INT16_MIN);
-
-    USR_LogVariable_int(&huart2, "INT32_MAX", 7, INT32_MAX);
-    USR_LogVariable_int(&huart2, "INT32_MIN", 7, INT32_MIN);
-    // USR_LogVariable_long(&huart2, "INT32_MAX", 7, INT32_MAX);
-    // USR_LogVariable_long(&huart2, "INT32_MIN", 7, INT32_MIN);
-    // USR_LogVariable_longLong(&huart2, "INT64_MAX", 7, INT64_MAX);
-    // USR_LogVariable_longLong(&huart2, "INT64_MIN", 7, INT64_MIN);
-    // USR_LogVariable_float(&huart2, "float_pos", 7, *(float *)&float_pos);
-    // USR_LogVariable_float(&huart2, "float_neg", 7, *(float *)&float_neg);
-    // USR_LogVariable_double(&huart2, "double_pos", 7, *(double *)&double_pos);
-    // USR_LogVariable_double(&huart2, "double_neg", 7, *(double *)&double_neg);
-
-    // USR_LogVariable_ptrChar(&huart2, "ptr_char", 7, ptrChar, 5);
-    // USR_LogVariable_ptrShort(&huart2, "ptr_short", 7, ptrShort, 5);
-    // USR_LogVariable_ptrInt(&huart2, "ptr_int", 7, ptrInt, 5);
-    // USR_LogVariable_ptrLong(&huart2, "ptr_long", 7, ptrLong, 5);
-    // USR_LogVariable_ptrLongLong(&huart2, "ptr_long_long", 7, ptrLongLong, 5);
-    // USR_LogVariable_ptrFloat(&huart2, "ptr_float", 7, ptrFloat, 5);
-    // USR_LogVariable_ptrDouble(&huart2, "ptr_float", 7, ptrDouble, 5);
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -218,11 +180,8 @@ int main(void)
     while (1)
     {
         /* USER CODE END WHILE */
+
         /* USER CODE BEGIN 3 */
-        HAL_Delay(500);
-        HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-        HAL_GPIO_TogglePin(LED_PC10_GPIO_Port, LED_PC10_Pin);
-        HAL_GPIO_TogglePin(LED_PC11_GPIO_Port, LED_PC11_Pin);
     }
     /* USER CODE END 3 */
 }
@@ -291,7 +250,7 @@ static void MX_I2C3_Init(void)
 
     /* USER CODE END I2C3_Init 1 */
     hi2c3.Instance = I2C3;
-    hi2c3.Init.Timing = 0x20E16892;
+    hi2c3.Init.Timing = 0x00D10E22;
     hi2c3.Init.OwnAddress1 = 0;
     hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
     hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -317,6 +276,10 @@ static void MX_I2C3_Init(void)
     {
         Error_Handler();
     }
+
+    /** I2C Fast mode Plus enable
+     */
+    HAL_I2CEx_EnableFastModePlus(I2C_FASTMODEPLUS_I2C3);
     /* USER CODE BEGIN I2C3_Init 2 */
 
     /* USER CODE END I2C3_Init 2 */
@@ -366,10 +329,10 @@ static void MX_TIM3_Init(void)
 
     /* USER CODE END TIM3_Init 1 */
     htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 399;
+    htim3.Init.Prescaler = 999;
     htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
     htim3.Init.Period = 49999;
-    htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
+    htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
     htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
     if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
     {
@@ -511,16 +474,16 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 static void USR_LogMessage(UART_HandleTypeDef *uart_port, char *message, int size)
 {
-    HAL_UART_Transmit(uart_port, message, size, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)message, size, 10);
 }
 static void USR_LogVariable_char(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, char variable)
 {
     char var[10] = {0};
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": ", 2, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": ", 2, 10);
     sprintf(var, "%c (0x%02X)\n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 10, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)var, 10, 10);
 }
 static void USR_LogVariable_ptrChar(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                     char *variable, int length)
@@ -528,24 +491,24 @@ static void USR_LogVariable_ptrChar(UART_HandleTypeDef *uart_port, char *variabl
     char temp[6] = {0};
     int i = 0;
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": [ ", 4, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": [ ", 4, 10);
     for (; i < length; i++)
     {
         sprintf(temp, "0x%02X ", variable[i]);
-        HAL_UART_Transmit(uart_port, temp, 5, 10);
+        HAL_UART_Transmit(uart_port, (uint8_t *)temp, 5, 10);
     }
-    HAL_UART_Transmit(uart_port, "]\n", 2, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)"]\n", 2, 10);
 }
 static void USR_LogVariable_short(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                   short variable)
 {
     char var[21] = {0};
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": ", 2, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": ", 2, 10);
     sprintf(var, "%hd (0x%02X)\n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 20, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)var, 20, 10);
 }
 static void USR_LogVariable_ptrShort(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                      short *variable, int length)
@@ -553,91 +516,128 @@ static void USR_LogVariable_ptrShort(UART_HandleTypeDef *uart_port, char *variab
     char temp[8] = {0};
     int i = 0;
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": [ ", 4, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": [ ", 4, 10);
     for (; i < length; i++)
     {
         sprintf(temp, "0x%04X ", variable[i]);
-        HAL_UART_Transmit(uart_port, temp, 7, 10);
+        HAL_UART_Transmit(uart_port, (uint8_t *)temp, 7, 10);
     }
-    HAL_UART_Transmit(uart_port, "]\n", 2, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)"]\n", 2, 10);
 }
 static void USR_LogVariable_int(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, int variable)
 {
-    char var[25] = {0};
+    char var[35] = {0};
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": ", 2, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": ", 2, 10);
     sprintf(var, "%d (0x%04X)\n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 24, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)var, 34, 10);
 }
 static void USR_LogVariable_ptrInt(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                    int *variable, int length)
 {
-    char var[26] = {0};
+    char var[12] = {0};
     int i = 0;
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": [ ", 4, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": [ ", 4, 10);
     for (; i < length; i++)
-        sprintf(var, "%ls \n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 25, 10);
+    {
+        sprintf(var, "%04X ", variable[i]);
+        HAL_UART_Transmit(uart_port, (uint8_t *)var, 12, 10);
+    }
+    HAL_UART_Transmit(uart_port, (uint8_t *)"]\n", 2, 10);
 }
 static void USR_LogVariable_long(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname, long variable)
 {
     char var[35] = {0};
 
-    HAL_UART_Transmit(uart_port, variable_name, sizeof_varname, 10);
-    HAL_UART_Transmit(uart_port, ": ", 2, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": ", 2, 10);
     sprintf(var, "%ld (0x%04lX)\n", variable, variable);
-    HAL_UART_Transmit(uart_port, var, 34, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)var, 34, 10);
 }
 static void USR_LogVariable_ptrLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                     long *variable, int length)
 {
-}
-static void USR_LogVariable_longLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                     long long variable)
-{
-}
-static void USR_LogVariable_ptrLongLong(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                        long long *variable, int length)
-{
+    char var[12] = {0};
+    int i = 0;
+
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": [ ", 4, 10);
+    for (; i < length; i++)
+    {
+        sprintf(var, "0x%04lX ", variable[i]);
+        HAL_UART_Transmit(uart_port, (uint8_t *)var, 12, 10);
+    }
+    HAL_UART_Transmit(uart_port, (uint8_t *)"]\n", 2, 10);
 }
 static void USR_LogVariable_float(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                   float variable)
 {
+    char var[60] = {0};
+
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": ", 2, 10);
+    sprintf(var, "%f (0x%08lX)\n", variable, *(uint32_t *)&variable);
+    HAL_UART_Transmit(uart_port, (uint8_t *)var, 60, 10);
 }
 static void USR_LogVariable_ptrFloat(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
                                      float *variable, int length)
 {
-}
-static void USR_LogVariable_double(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                   double variable)
-{
-}
-static void USR_LogVariable_ptrDouble(UART_HandleTypeDef *uart_port, char *variable_name, int sizeof_varname,
-                                      double *variable, int length)
-{
+    char var[12] = {0};
+    int i = 0;
+
+    HAL_UART_Transmit(uart_port, (uint8_t *)variable_name, sizeof_varname, 10);
+    HAL_UART_Transmit(uart_port, (uint8_t *)": [ ", 4, 10);
+    for (; i < length; i++)
+    {
+        sprintf(var, "0x%08lX ", *(uint32_t *)(variable + i));
+        HAL_UART_Transmit(uart_port, (uint8_t *)var, 12, 10);
+    }
+    HAL_UART_Transmit(uart_port, (uint8_t *)"]\n", 2, 10);
 }
 
-uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select, uint8_t read_write)
+// https://ww1.microchip.com/downloads/aemDocuments/documents/MPD/ProductDocuments/DataSheets/24AA1025-24LC1025-24FC1025-1024-Kbit-I2C-Serial-EEPROM-20001941M.pdf
+// https://wiki.st.com/stm32mcu/wiki/Getting_started_with_I2C
+uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select)
 {
+    uint8_t control_byte = ((control_code & 0x0F) << 4) | ((block_select & 0x01) << 3) | (chip_select & 0x03);
+    return control_byte;
 }
-void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data)
+void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint32_t address, uint8_t data)
 {
+    uint8_t lb_addr = address & 0xFF;
+    uint8_t hb_addr = (address & 0xFF00) >> 8;
+    uint8_t cb_addr = (address & 0xFF0000) >> 16;
+    uint8_t EEPROM_IC_Address = control_byte_builder(CTRL_CODE, (cb_addr & 0x01), ((cb_addr & 0x6) >> 1));
+    char data[3] = {hb_addr, lb_addr, data};
+
+    HAL_I2C_Master_Transmit_IT(&hi2c3, EEPROM_IC_Address, data, sizeof(data));
 }
-void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t data[128])
+void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t *data,
+                             uint8_t sizeof_data)
 {
 }
 uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line)
 {
+    return (uint8_t)0;
 }
 uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line)
 {
+    return (uint8_t)0;
 }
 uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line)
 {
+    return (uint8_t)0;
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+    HAL_GPIO_TogglePin(LED_PC10_GPIO_Port, LED_PC10_Pin);
+    HAL_GPIO_TogglePin(LED_PC11_GPIO_Port, LED_PC11_Pin);
 }
 /* USER CODE END 4 */
 
