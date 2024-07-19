@@ -112,12 +112,12 @@ static void USR_LogVariable_ptrFloat(UART_HandleTypeDef *uart_port, char *variab
                                      float *variable, int length) __attribute__((unused));
 
 uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t chip_select) __attribute__((unused));
-void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint32_t address, uint8_t data) __attribute__((unused));
-void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t *data,
-                             uint8_t sizeof_data) __attribute__((unused));
-uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line) __attribute__((unused));
-uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line) __attribute__((unused));
-uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line) __attribute__((unused));
+void WriteByteRequestHandler(I2C_HandleTypeDef *I2C_Line, uint32_t address, uint8_t data) __attribute__((unused));
+void WritePageRequestHandler(I2C_HandleTypeDef *I2C_Line, uint32_t address, uint8_t *data, uint8_t sizeof_data)
+    __attribute__((unused));
+uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef *I2C_Line) __attribute__((unused));
+uint8_t RandomAddressReadHandler(I2C_HandleTypeDef *I2C_Line) __attribute__((unused));
+uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef *I2C_Line) __attribute__((unused));
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -606,29 +606,47 @@ uint8_t control_byte_builder(uint8_t control_code, uint8_t block_select, uint8_t
     uint8_t control_byte = ((control_code & 0x0F) << 4) | ((block_select & 0x01) << 3) | (chip_select & 0x03);
     return control_byte;
 }
-void WriteByteRequestHandler(I2C_HandleTypeDef I2C_Line, uint32_t address, uint8_t data)
+
+void WriteByteRequestHandler(I2C_HandleTypeDef *I2C_Line, uint32_t address, uint8_t data)
 {
-    uint8_t lb_addr = address & 0xFF;
-    uint8_t hb_addr = (address & 0xFF00) >> 8;
+    uint16_t addr = address & 0xFFFF;
     uint8_t cb_addr = (address & 0xFF0000) >> 16;
     uint8_t EEPROM_IC_Address = control_byte_builder(CTRL_CODE, (cb_addr & 0x01), ((cb_addr & 0x6) >> 1));
-    char data[3] = {hb_addr, lb_addr, data};
 
-    HAL_I2C_Master_Transmit_IT(&hi2c3, EEPROM_IC_Address, data, sizeof(data));
+    while (HAL_I2C_IsDeviceReady(&hi2c3, EEPROM_IC_Address, 1, 10) != HAL_OK)
+    {
+    }
+    HAL_I2C_Mem_Write_IT(I2C_Line, EEPROM_IC_Address, addr, I2C_MEMADD_SIZE_16BIT, data, 0x01);
+    // HAL_I2C_Master_Transmit_IT(&hi2c3, EEPROM_IC_Address, data, sizeof(data));
 }
-void WritePageRequestHandler(I2C_HandleTypeDef I2C_Line, uint8_t hb_address, uint8_t lb_address, uint8_t *data,
-                             uint8_t sizeof_data)
+void WritePageRequestHandler(I2C_HandleTypeDef *I2C_Line, uint32_t address, uint8_t *data, uint8_t sizeof_data)
 {
+    uint16_t addr = address & 0xFFFF;
+    uint8_t cb_addr = (address & 0xFF0000) >> 16;
+    uint8_t EEPROM_IC_Address = control_byte_builder(CTRL_CODE, (cb_addr & 0x01), ((cb_addr & 0x6) >> 1));
+
+    while (HAL_I2C_IsDeviceReady(&hi2c3, EEPROM_IC_Address, 1, 10) != HAL_OK)
+    {
+    }
+    HAL_I2C_Mem_Write_IT(I2C_Line, EEPROM_IC_Address, addr, I2C_MEMADD_SIZE_16BIT, data, sizeof_data);
 }
-uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef I2C_Line)
+uint8_t CurrentAddressReadHandler(I2C_HandleTypeDef *I2C_Line)
+{
+    uint16_t addr = address & 0xFFFF;
+    uint8_t cb_addr = (address & 0xF0000) >> 16;
+    uint8_t EEPROM_IC_Address = control_byte_builder(CTRL_CODE, (cb_addr & 0x01), ((cb_addr & 0x6) >> 1));
+
+    while (HAL_I2C_IsDeviceReady(&hi2c3, EEPROM_IC_Address, 1, 10) != HAL_OK)
+    {
+    }
+
+    return (uint8_t)0;
+}
+uint8_t RandomAddressReadHandler(I2C_HandleTypeDef *I2C_Line)
 {
     return (uint8_t)0;
 }
-uint8_t RandomAddressReadHandler(I2C_HandleTypeDef I2C_Line)
-{
-    return (uint8_t)0;
-}
-uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef I2C_Line)
+uint8_t SequentialAddressReadHandler(I2C_HandleTypeDef *I2C_Line)
 {
     return (uint8_t)0;
 }
@@ -672,3 +690,20 @@ void assert_failed(uint8_t *file, uint32_t line)
     /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+unsigned char Read_EEPROM(unsigned int addr, unsigned char device)
+{
+    unsigned char page;
+    uint8_t dato;
+    page = 0xAF; // due to chip select bits setting
+    HAL_I2C_Mem_Read(&hi2c3, page, addr, I2C_MEMADD_SIZE_16BIT, &dato, 1, 5);
+    return dato;
+}
+void Write_EEPROM(unsigned int addr, unsigned char dato, unsigned char device)
+{
+    unsigned char page;
+    page = 0xAF; // due to chip select bits setting
+    HAL_I2C_Mem_Write(&hi2c3, page, addr, I2C_MEMADD_SIZE_16BIT, &dato, 1, 5);
+    while (HAL_I2C_IsDeviceReady(&hi2c3, 0xA0, 1, HAL_MAX_DELAY) != HAL_OK)
+        ;
+    HAL_Delay(10);
+}
